@@ -40,9 +40,10 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Button(onClick = { viewModel.incrementCounter() }) {
-                        Text(text = "Counter: $count")
-                    }
+                    Text(text = viewModel.numberString)
+//                    Button(onClick = { viewModel.incrementCounter() }) {
+//                        Text(text = "Counter: $count")
+//                    }
 //                    Text(
 //                        text = time.toString(),
 //                        fontSize =  30.sp,

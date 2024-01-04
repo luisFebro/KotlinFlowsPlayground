@@ -1,15 +1,19 @@
 package com.febro.kotlinflowsplayground
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.key.Key.Companion.I
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModel : ViewModel() {
 
     val countDownFlow = flow<Int> {
@@ -32,24 +36,39 @@ class MainViewModel : ViewModel() {
     private val _sharedFlow = MutableSharedFlow<Int>(5)
     val sharedFlow = _sharedFlow.asSharedFlow()
 
+    private val flow1 = (1..10).asFlow().onEach { delay(1000L) }
+    private val flow2 = (10..20).asFlow().onEach { delay(500L) }
+
+    var numberString by mutableStateOf("")
+        private set
+
+
     init {
         // collectFlow()
 
-        viewModelScope.launch {
-            sharedFlow.collect {
-                delay(2000L)
-                println("@@ First SharedFlow: The received number is $it")
-            }
-        }
+//        viewModelScope.launch {
+//            sharedFlow.collect {
+//                delay(2000L)
+//                println("@@ First SharedFlow: The received number is $it")
+//            }
+//        }
+//
+//        viewModelScope.launch {
+//            sharedFlow.collect {
+//                delay(3000L)
+//                println("@@ Second SharedFlow: The received number is $it")
+//            }
+//        }
+//
+//        squareNumber(2)
 
-        viewModelScope.launch {
-            sharedFlow.collect {
-                delay(3000L)
-                println("@@ Second SharedFlow: The received number is $it")
-            }
-        }
+//        flow1.zip(flow2) { number1, number2 ->
+//            numberString += "($number1, $number2)\n"
+//        }.launchIn(viewModelScope)
 
-        squareNumber(2)
+        merge(flow1, flow2).onEach {
+            numberString += "$it\n"
+        }.launchIn(viewModelScope)
     }
 
     fun squareNumber(number: Int) {
